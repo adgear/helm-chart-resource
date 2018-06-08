@@ -1,0 +1,13 @@
+{
+  "source": {
+    "chart_name": "etcd",
+    "repository_name": "incubator",
+    "repos": [
+      {
+        "name": "incubator",
+        "url": "https://kubernetes-charts-incubator.storage.googleapis.com"
+      }
+    ]
+  },
+  "version": null
+}

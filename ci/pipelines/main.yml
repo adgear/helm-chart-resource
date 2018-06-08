@@ -1,0 +1,71 @@
+resource_types:
+  - name: pull-request
+    type: docker-image
+    source:
+      repository: jtarchie/pr
+
+  - name: artifactory
+    type: docker-image
+    source:
+      repository: pivotalservices/artifactory-resource
+
+resources:
+  - name: helm-chart-resource
+    type: docker-image
+    source:
+      repository: adgear/helm-chart-resource
+      username: ((dockerhub.username))
+      password: ((dockerhub.password))
+      
+  - name: helm-chart-resource-repo
+    type: git
+    source:
+      uri: git@github.com:adgear/helm-chart-resource.git
+      branch: master
+      ignore_paths:
+      - "*.md"
+      - "VERSION"
+      private_key: ((adgear-concourse.ssh_private_key))
+
+  - name: helm-chart-resource-pr
+    type: pull-request
+    source:
+      require_review_approval: true
+      only_mergeable: true
+      uri: git@github.com:adgear/helm-chart-resource.git
+      access_token: ((adgear-concourse.access_token))
+      private_key: ((adgear-concourse.ssh_private_key))
+      repo: adgear/helm-chart-resource
+      base: master
+
+jobs:
+  - name: test-pr
+    plan:
+    - get: helm-chart-resource-pr
+      trigger: true
+    - put: helm-chart-resource-pr
+      params:
+        path: helm-chart-resource-pr
+        status: pending
+    - task: test
+      file: helm-chart-resource-pr/ci/tasks/test.yml
+      on_failure:
+        put: helm-chart-resource-pr
+        params:
+          path: helm-chart-resource-pr
+          status: failure
+      on_success:
+        put: helm-chart-resource-pr
+        params:
+          path: helm-chart-resource-pr
+          status: success
+
+  - name: build-master
+    plan:
+    - get: helm-chart-resource-repo
+      trigger: true
+    - put: helm-chart-resource
+      params:
+        build: helm-chart-resource
+        tag: helm-chart-resource/VERSION
+        tag_as_latest: true
