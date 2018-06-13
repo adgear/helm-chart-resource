@@ -1,7 +1,6 @@
 FROM alpine:3.7 AS runtime
 
-RUN chmod +x /opt/resource/* ;\
-  apk add --no-cache curl jq bash
+RUN apk add --no-cache curl jq bash
 
 FROM alpine:3.7 AS helm
 
@@ -20,6 +19,7 @@ ADD common.sh /opt/resource/common.sh
 
 COPY --from=helm /usr/local/bin/helm /usr/local/bin/.
 
-RUN helm init --client-only
+RUN helm init --client-only ;\
+  chmod +x /opt/resource/*
 
 WORKDIR /opt/resource
