@@ -2,6 +2,14 @@
 
 Tracks the helm releases in a [helm](https://helm.sh/) repository.
 
+```yaml
+resource_types:
+- name: helm-chart-resource
+  type: docker-image
+  source:
+    repository: adgear/helm-chart-resource
+```
+
 ## Source Configuration
 
 * `chart_name`: *Required.* The chart name
