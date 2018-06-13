@@ -82,6 +82,10 @@ Only supports `artifactory` for now.
 
 To be implemented.
 
+### License
+
+[MIT](LICENSE)
+
 ### Contributing
 
 TBD.
