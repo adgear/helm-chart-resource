@@ -1,0 +1,59 @@
+#!/bin/bash
+
+set -e              # Willexit immediate if command exits with non-zero status
+set -u              # Will print message if variable not set,
+set -o pipefail     # Fail on a pipline like cmd1 | cmd2 | cmd3, rather then wait
+
+exec 3>&1           # Make stdout available as fd 3 for the result
+exec 1>&2           # Redirect all output to stderr for logging
+
+source $(dirname $0)/common.sh
+
+source=$1
+
+if [ -z "$source" ]; then
+  echo "usage: $0 <path/to/source>"
+  exit 1
+fi
+
+payload=$(mktemp $TMPDIR/helm-release-check.XXXXXX)
+
+cat > $payload <&0
+
+debug=$(jq -cr '.source.debug // 0' <  $payload)
+
+if [[ "$debug" -eq "1" ]]; then
+  set -x
+fi
+
+setuprepo
+
+chart_name=$(jq -cr .source.chart_name < $payload)
+repository_name=$(jq -cr .source.repository_name < $payload)
+repository_type=$(jq -cr .params.type < $payload)
+api_url=$(jq -cr .params.api_url < $payload)
+path=$(jq -cr .params.path < $payload)
+
+version=`cat $source/$path/Chart.yaml | grep version | awk -F ":" '{print $2};' | tr -d '[:space:]'`
+
+helm dep build $source/$path
+
+helm package $source/$path -d $TMPDIR/
+
+if [[ $repository_name != "stable" ]]; then
+  url=$(jq -cr ". | select(.source.repos != null) | .source.repos[] | select(.name | contains(\"${repository_name}\"))" < $payload | jq -cr .url)
+  username=$(jq -cr ". | select(.source.repos != null) | .source.repos[] | select(.name | contains(\"${repository_name}\"))" < $payload | jq -cr .username)
+  password=$(jq -cr ". | select(.source.repos != null) | .source.repos[] | select(.name | contains(\"${repository_name}\"))" < $payload | jq -cr .password)
+fi
+
+case $repository_type in
+"artifactory")
+  access_token=$(curl -s -u${username}:${password} -XPOST "${api_url}/security/token" -d "username=${username}" | jq -cr .access_token)
+  metadata=$(curl -s -H "Authorization: Bearer ${access_token}" -T $TMPDIR/${chart_name}-${version}.tgz "${url}/${chart_name}-${version}.tgz")
+  output="{version: {ref: \"$version\"}}"
+  jq -n "$(echo $output)" >&3
+  ;;
+*)
+  echo "Not supported yet."
+  exit 1
+esac
