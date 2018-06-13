@@ -66,6 +66,6 @@ jobs:
       trigger: true
     - put: helm-chart-resource
       params:
-        build: helm-chart-resource
-        tag: helm-chart-resource/VERSION
+        build: helm-chart-resource-repo
+        tag: helm-chart-resource-repo/VERSION
         tag_as_latest: true
