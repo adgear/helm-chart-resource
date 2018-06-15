@@ -1,2 +1,4 @@
 .version
 cluster-autoscaler/
+out.json
+debug.test
