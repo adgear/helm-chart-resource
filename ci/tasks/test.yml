@@ -22,4 +22,6 @@ run:
       test_path="$(pwd)/coverage"
       cd /go/src/github.com/adgear/helm-chart-resource/
       dep ensure
-      go test ./... -cover -v > $test_path/tests.results
+      echo -n "```console" > $test_path/tests.results
+      go test ./... -cover -v >> $test_path/tests.results
+      echo -n "```" >> $test_path/tests.results
