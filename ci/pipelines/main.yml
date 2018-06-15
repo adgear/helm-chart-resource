@@ -58,6 +58,7 @@ jobs:
         params:
           path: helm-chart-resource-pr
           status: success
+          comment: coverage/tests.results
 
   - name: build-master
     plan:

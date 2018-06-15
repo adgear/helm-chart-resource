@@ -6,6 +6,8 @@ image_resource:
     tag: 1.10.3-alpine3.7
 inputs:
 - name: helm-chart-resource-pr
+outputs:
+- name: coverage
 run:
   path: sh
   args:
@@ -17,6 +19,7 @@ run:
       go get -u github.com/golang/dep/cmd/dep    
       mkdir -p /go/src/github.com/adgear/helm-chart-resource/
       cp -pr helm-chart-resource-pr/* /go/src/github.com/adgear/helm-chart-resource/.
+      test_path="$(pwd)/coverage"
       cd /go/src/github.com/adgear/helm-chart-resource/
       dep ensure
-      go test ./... -cover -v
+      go test ./... -cover -v > $test_path/tests.results
