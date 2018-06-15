@@ -30,7 +30,6 @@ resources:
   - name: helm-chart-resource-pr
     type: pull-request
     source:
-      require_review_approval: true
       only_mergeable: true
       uri: git@github.com:adgear/helm-chart-resource.git
       access_token: ((adgear-concourse.access_token))
