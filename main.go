@@ -27,6 +27,7 @@ var (
 	tmpdir      string
 	verbose     bool
 	showVersion bool
+	help        bool
 
 	helm        helmLib.Helm
 	artifactory artifactoryLib.Artifactory
@@ -43,6 +44,7 @@ func init() {
 	rootCmd.PersistentFlags().StringVarP(&tmpdir, "tmpdir", "t", "/tmp/", "Temporary directory for packaging helm chart.")
 	rootCmd.PersistentFlags().BoolVarP(&verbose, "verbose", "v", false, "Enable verbose mode.")
 	rootCmd.PersistentFlags().BoolVarP(&showVersion, "version", "V", false, "Prints the version and exit.")
+	rootCmd.PersistentFlags().BoolVarP(&help, "help", "h", false, "Show help.")
 
 	err := rootCmd.Execute()
 	if err != nil {
@@ -53,6 +55,11 @@ func init() {
 func main() {
 	if verbose {
 		log.SetLevel(log.DebugLevel)
+	}
+
+	if help {
+		rootCmd.Usage()
+		os.Exit(0)
 	}
 
 	if showVersion {
