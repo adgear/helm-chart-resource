@@ -31,7 +31,7 @@ func NewCheckResource(helm helm.Helm) (CheckResource, error) {
 // Execute the check resource
 func (cr checkResource) Execute(source utils.Source) (string, error) {
 	if source.ChartName == "" {
-		log.Fatal("No bruh!")
+		log.Fatal("Chart Name can't be empty.")
 		os.Exit(1)
 	}
 
