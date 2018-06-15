@@ -5,6 +5,7 @@
 package mocks
 
 import (
+	utils "github.com/adgear/helm-chart-resource/utils"
 	gomock "github.com/golang/mock/gomock"
 	reflect "reflect"
 )
@@ -56,4 +57,40 @@ func (m *MockHelm) Search(repo string) (string, error) {
 // Search indicates an expected call of Search
 func (mr *MockHelmMockRecorder) Search(repo interface{}) *gomock.Call {
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Search", reflect.TypeOf((*MockHelm)(nil).Search), repo)
+}
+
+// InstallHelmRepo mocks base method
+func (m *MockHelm) InstallHelmRepo(repos []utils.Repo) error {
+	ret := m.ctrl.Call(m, "InstallHelmRepo", repos)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// InstallHelmRepo indicates an expected call of InstallHelmRepo
+func (mr *MockHelmMockRecorder) InstallHelmRepo(repos interface{}) *gomock.Call {
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "InstallHelmRepo", reflect.TypeOf((*MockHelm)(nil).InstallHelmRepo), repos)
+}
+
+// BuildHelmChart mocks base method
+func (m *MockHelm) BuildHelmChart(source, path string) error {
+	ret := m.ctrl.Call(m, "BuildHelmChart", source, path)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// BuildHelmChart indicates an expected call of BuildHelmChart
+func (mr *MockHelmMockRecorder) BuildHelmChart(source, path interface{}) *gomock.Call {
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "BuildHelmChart", reflect.TypeOf((*MockHelm)(nil).BuildHelmChart), source, path)
+}
+
+// PackageHelmChart mocks base method
+func (m *MockHelm) PackageHelmChart(source, path, tmpdir string) error {
+	ret := m.ctrl.Call(m, "PackageHelmChart", source, path, tmpdir)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// PackageHelmChart indicates an expected call of PackageHelmChart
+func (mr *MockHelmMockRecorder) PackageHelmChart(source, path, tmpdir interface{}) *gomock.Call {
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "PackageHelmChart", reflect.TypeOf((*MockHelm)(nil).PackageHelmChart), source, path, tmpdir)
 }

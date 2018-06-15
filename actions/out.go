@@ -5,6 +5,7 @@ package actions
 import (
 	"errors"
 
+	"github.com/adgear/helm-chart-resource/artifactory"
 	"github.com/adgear/helm-chart-resource/helm"
 	"github.com/adgear/helm-chart-resource/utils"
 )
@@ -15,26 +16,28 @@ type OutResource interface {
 }
 
 type outResource struct {
-	helm helm.Helm
+	helm        helm.Helm
+	artifactory artifactory.Artifactory
 }
 
 // NewOutResource returns a new instance
-func NewOutResource(helm helm.Helm) (OutResource, error) {
+func NewOutResource(helm helm.Helm, artifactory artifactory.Artifactory) (OutResource, error) {
 	return outResource{
-		helm: helm,
+		helm:        helm,
+		artifactory: artifactory,
 	}, nil
 }
 
 // Execute the in resource
 func (or outResource) Execute(input utils.Input, sourcePath string, tmpdir string) (string, error) {
-	utils.InstallHelmRepo(input.Source.Repos)
+	or.helm.InstallHelmRepo(input.Source.Repos)
 
-	utils.BuildHelmChart(sourcePath, input.Params.Path)
+	or.helm.BuildHelmChart(sourcePath, input.Params.Path)
 
-	utils.PackageHelmChart(sourcePath, input.Params.Path, tmpdir)
+	or.helm.PackageHelmChart(sourcePath, input.Params.Path, tmpdir)
 
 	if input.Params.Type == "artifactory" {
-		_, err := utils.UploadArtifactoryChart(input.Source, input.Params, input.Version, tmpdir)
+		_, err := or.artifactory.UploadArtifactoryChart(input.Source, input.Params, input.Version, tmpdir)
 		if err != nil {
 			return "", err
 		}

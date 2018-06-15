@@ -11,6 +11,7 @@ import (
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 
+	artifactoryLib "github.com/adgear/helm-chart-resource/artifactory"
 	helmLib "github.com/adgear/helm-chart-resource/helm"
 )
 
@@ -27,7 +28,8 @@ var (
 	verbose     bool
 	showVersion bool
 
-	helm helmLib.Helm
+	helm        helmLib.Helm
+	artifactory artifactoryLib.Artifactory
 )
 
 func init() {
@@ -73,6 +75,7 @@ func main() {
 	}
 
 	helm = helmLib.NewHelm()
+	artifactory = artifactoryLib.NewArtifactory()
 
 	switch action {
 	case "check":
@@ -106,7 +109,7 @@ func main() {
 		fmt.Println(output)
 		os.Exit(0)
 	case "out":
-		outResource, err := actions.NewOutResource(helm)
+		outResource, err := actions.NewOutResource(helm, artifactory)
 		if err != nil {
 			log.Fatal(err)
 			os.Exit(1)

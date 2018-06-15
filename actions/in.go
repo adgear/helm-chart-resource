@@ -28,7 +28,7 @@ func NewInResource(helm helm.Helm) (InResource, error) {
 
 // Execute the in resource
 func (ir inResource) Execute(source utils.Source, destination string, version string) (string, error) {
-	utils.InstallHelmRepo(source.Repos)
+	ir.helm.InstallHelmRepo(source.Repos)
 
 	var output string
 

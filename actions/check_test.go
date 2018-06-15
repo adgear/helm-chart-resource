@@ -15,6 +15,7 @@ import (
 
 var (
 	helmMock          *mocks.MockHelm
+	artifactoryMock   *mocks.MockArtifactory
 	checkResourceMock *mocks.MockCheckResource
 )
 
@@ -22,6 +23,7 @@ func setup(t *testing.T) {
 	mockCtrl := gomock.NewController(t)
 
 	helmMock = mocks.NewMockHelm(mockCtrl)
+	artifactoryMock = mocks.NewMockArtifactory(mockCtrl)
 	checkResourceMock = mocks.NewMockCheckResource(mockCtrl)
 }
 

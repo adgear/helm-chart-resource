@@ -17,6 +17,7 @@ func TestCannotWriteFile(t *testing.T) {
 		Source: utils.Source{
 			ChartName:      "etcd",
 			RepositoryName: "incubator",
+			Repos:          []utils.Repo{},
 		},
 		Version: map[string]string{
 			"ref": "0.4.0",
@@ -25,6 +26,10 @@ func TestCannotWriteFile(t *testing.T) {
 	destination := "/jaldfsji/"
 
 	cr, _ := actions.NewInResource(helmMock)
+
+	helmMock.EXPECT().InstallHelmRepo([]utils.Repo{}).Return(nil).Times(1)
+	helmMock.EXPECT().BuildHelmChart(destination, input.Params.Path).Return(nil).Times(1)
+	helmMock.EXPECT().PackageHelmChart(destination, input.Params.Path, "/tmp").Return(nil).Times(1)
 
 	_, err := cr.Execute(input.Source, destination, input.Version["ref"])
 	assert.Error(t, err)
@@ -37,6 +42,7 @@ func TestWriteToFile(t *testing.T) {
 		Source: utils.Source{
 			ChartName:      "etcd",
 			RepositoryName: "incubator",
+			Repos:          []utils.Repo{},
 		},
 		Version: map[string]string{
 			"ref": "0.4.0",
@@ -48,6 +54,10 @@ func TestWriteToFile(t *testing.T) {
 	}
 	output := "{version: {ref: \"0.4.0\"}}"
 	cr, _ := actions.NewInResource(helmMock)
+
+	helmMock.EXPECT().InstallHelmRepo([]utils.Repo{}).Return(nil).Times(1)
+	helmMock.EXPECT().BuildHelmChart(destination, input.Params.Path).Return(nil).Times(1)
+	helmMock.EXPECT().PackageHelmChart(destination, input.Params.Path, "/tmp").Return(nil).Times(1)
 
 	o, err := cr.Execute(input.Source, destination, input.Version["ref"])
 
