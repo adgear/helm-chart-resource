@@ -28,7 +28,7 @@ func NewOutResource(helm helm.Helm, artifactory artifactory.Artifactory) (OutRes
 	}, nil
 }
 
-// Execute the in resource
+// Execute the out resource
 func (or outResource) Execute(input utils.Input, sourcePath string, tmpdir string) (string, error) {
 	or.helm.InstallHelmRepo(input.Source.Repos)
 
@@ -37,12 +37,12 @@ func (or outResource) Execute(input utils.Input, sourcePath string, tmpdir strin
 	or.helm.PackageHelmChart(sourcePath, input.Params.Path, tmpdir)
 
 	if input.Params.Type == "artifactory" {
-		_, err := or.artifactory.UploadArtifactoryChart(input.Source, input.Params, input.Version, tmpdir)
+		err := or.artifactory.UploadArtifactoryChart(input.Source, input.Params, input.Version, tmpdir)
 		if err != nil {
 			return "", err
 		}
 	} else {
-		return "", errors.New("unsupported")
+		return "", errors.New("unsupported chart repository")
 	}
 
 	var output string

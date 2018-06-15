@@ -77,10 +77,6 @@ func (h helm) InstallHelmRepo(repos []utils.Repo) error {
 		if _, err = exec.Command(cmdName, cmdArgs...).Output(); err != nil {
 			return err
 		}
-
-		// cmdOutput := string(cmdOut)
-
-		// fmt.Println(cmdOutput)
 	}
 	return nil
 }

@@ -32,7 +32,7 @@ func TestArtifactory(t *testing.T) {
 	helmMock.EXPECT().InstallHelmRepo([]utils.Repo{}).Return(nil).Times(1)
 	helmMock.EXPECT().BuildHelmChart(destination, input.Params.Path).Return(nil).Times(1)
 	helmMock.EXPECT().PackageHelmChart(destination, input.Params.Path, "/tmp").Return(nil).Times(1)
-	artifactoryMock.EXPECT().UploadArtifactoryChart(input.Source, input.Params, input.Version, "/tmp").Return("", nil)
+	artifactoryMock.EXPECT().UploadArtifactoryChart(input.Source, input.Params, input.Version, "/tmp").Return(nil)
 
 	cr, _ := actions.NewOutResource(helmMock, artifactoryMock)
 
@@ -71,5 +71,5 @@ func TestNotArtifactory(t *testing.T) {
 	_, err := cr.Execute(input, destination, "/tmp")
 
 	assert.Error(t, err)
-	assert.Equal(t, err.Error(), "unsupported")
+	assert.Equal(t, err.Error(), "unsupported chart repository")
 }

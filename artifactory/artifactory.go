@@ -2,6 +2,7 @@ package artifactory
 
 import (
 	"encoding/json"
+	"errors"
 
 	"github.com/adgear/helm-chart-resource/utils"
 	resty "gopkg.in/resty.v1"
@@ -9,7 +10,7 @@ import (
 
 // Artifactory interface
 type Artifactory interface {
-	UploadArtifactoryChart(source utils.Source, params utils.Params, version map[string]string, tmpdir string) (string, error)
+	UploadArtifactoryChart(source utils.Source, params utils.Params, version map[string]string, tmpdir string) error
 }
 
 type artifactory struct{}
@@ -20,7 +21,7 @@ func NewArtifactory() Artifactory {
 }
 
 // UploadArtifactoryChart takes the .tgz and POST to artifactory
-func (a artifactory) UploadArtifactoryChart(source utils.Source, params utils.Params, version map[string]string, tmpdir string) (string, error) {
+func (a artifactory) UploadArtifactoryChart(source utils.Source, params utils.Params, version map[string]string, tmpdir string) error {
 	for _, repo := range source.Repos {
 		if repo.Name == source.RepositoryName {
 			resp, err := resty.R().
@@ -31,17 +32,17 @@ func (a artifactory) UploadArtifactoryChart(source utils.Source, params utils.Pa
 				Post(params.APIURL + "/security/token")
 
 			if err != nil {
-				return "", err
+				return err
 			}
 
 			if resp.StatusCode() > 201 {
-				panic(string(resp.Body()))
+				return errors.New(string(resp.Body()))
 			}
 
 			var respMap map[string]interface{}
 			err = json.Unmarshal(resp.Body(), &respMap)
 			if err != nil {
-				return "", err
+				return err
 			}
 
 			resp, err = resty.R().
@@ -50,12 +51,12 @@ func (a artifactory) UploadArtifactoryChart(source utils.Source, params utils.Pa
 				Put(repo.URL + "/" + source.ChartName + "-" + version["ref"] + ".tgz")
 
 			if err != nil {
-				return "", err
+				return err
 			}
 
-			return string(resp.Body()), nil
+			return nil
 		}
 	}
 
-	return "", nil
+	return nil
 }
