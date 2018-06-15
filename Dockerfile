@@ -2,11 +2,10 @@ FROM golang:1.10.3-alpine3.7 AS build
 
 ADD . /go/src/github.com/adgear/helm-chart-resource/
 RUN apk add --no-cache git ;\
-  ls -lthra /go/src/github.com/adgear/helm-chart-resource/ ;\
   go get -u github.com/golang/dep/cmd/dep ;\
   dep ensure ;\
   cd /go/src/github.com/adgear/helm-chart-resource ;\
-  go build -ldflags "-X main.version`cat VERSION`" .
+  go build -ldflags "-X main.version=`cat VERSION`" .
 
 FROM alpine:3.7 AS runtime
 RUN apk add --no-cache curl jq bash
@@ -22,7 +21,7 @@ FROM runtime
 ADD check /opt/resource/check
 ADD in /opt/resource/in
 ADD out /opt/resource/out
-COPY --from=build /app/helm-chart-resource /usr/local/bin/.
+COPY --from=build /go/src/github.com/adgear/helm-chart-resource/helm-chart-resource /usr/local/bin/.
 COPY --from=helm /usr/local/bin/helm /usr/local/bin/.
 
 RUN helm init --client-only ;\
