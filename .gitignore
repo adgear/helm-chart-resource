@@ -1,2 +1,6 @@
 .version
 cluster-autoscaler/
+out.json
+debug.test
+helm-chart-resource
+vendor/

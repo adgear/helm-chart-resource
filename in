@@ -7,7 +7,7 @@ set -o pipefail     # Fail on a pipline like cmd1 | cmd2 | cmd3, rather then wai
 exec 3>&1           # Make stdout available as fd 3 for the result
 exec 1>&2           # Redirect all output to stderr for logging
 
-source $(dirname $0)/common.sh
+export TMPDIR=${TMPDIR:-/tmp}
 
 destination=$1
 
@@ -19,21 +19,6 @@ fi
 payload=$(mktemp $TMPDIR/helm-release-check.XXXXXX)
 cat > $payload <&0
 
-debug=$(jq -cr '.source.debug // 0' <  $payload)
+output=$(cat $payload | ./helm-chart-resource --action in --destination $destination)
 
-if [[ "$debug" -eq "1" ]]; then
-  set -x
-fi
-
-setuprepo
-
-ref=$(jq -r '.version.ref' < $payload)
-
-mkdir -p $destination
-cd $destination
-echo $ref > .version
-
-jq -n "{
-  version: {ref: \"$(echo $ref)\"},
-  metadata: []
-}" >&3
+jq -n "$output" >&3

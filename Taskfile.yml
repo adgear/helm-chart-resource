@@ -1,0 +1,20 @@
+# github.com/go-task/task
+
+version: '2'
+
+tasks:
+  ensure:
+    cmds:
+      - dep ensure
+  test:
+    cmds:
+      - go test ./... -cover -v
+  build:
+    deps: [ensure]
+    cmds:
+      - go build -ldflags "-X main.version=`cat VERSION`" .
+  mockgen:
+    cmds:
+      - for i in check in out; do mockgen -source=actions/$i.go -destination=mocks/mock_$i.go --package=mocks; done
+      - mockgen -source=helm/helm.go -destination=mocks/mock_helm.go --package=mocks
+      - mockgen -source=artifactory/artifactory.go -destination=mocks/mock_artifactory.go --package=mocks

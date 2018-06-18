@@ -2,14 +2,28 @@ platform: linux
 image_resource:
   type: docker-image
   source:
-    repository: adgear/helm-chart-resource
+    repository: golang
+    tag: 1.10.3-alpine3.7
 inputs:
 - name: helm-chart-resource-pr
+outputs:
+- name: coverage
 run:
   path: sh
   args:
     - -c
     - |
       #!/bin/bash
-      cat helm-chart-resource-pr/ci/assets/check.json | bash ./helm-chart-resource-pr/check
-      cat helm-chart-resource-pr/ci/assets/in.json | bash ./helm-chart-resource-pr/in etcd/
+
+      apk add --no-cache git
+      go get -u github.com/golang/dep/cmd/dep    
+      mkdir -p /go/src/github.com/adgear/helm-chart-resource/
+      cp -pr helm-chart-resource-pr/* /go/src/github.com/adgear/helm-chart-resource/.
+      test_path="$(pwd)/coverage"
+      cd /go/src/github.com/adgear/helm-chart-resource/
+      dep ensure
+      echo "\`\`\`console" > $test_path/tests.results
+      go test ./... -cover -v >> $test_path/tests.results
+      echo -n "\`\`\`" >> $test_path/tests.results
+
+      cat $test_path/tests.results
