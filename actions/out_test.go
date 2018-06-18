@@ -28,7 +28,7 @@ func TestArtifactory(t *testing.T) {
 	}
 	version := "0.4.0"
 	destination := "/potatoes/"
-	output := "{version: {ref: \"0.4.0\"}}"
+	output := "{\"version\": {\"ref\": \"0.4.0\"}}"
 
 	helmMock.EXPECT().InstallHelmRepo([]utils.Repo{}).Return(nil).Times(1)
 	helmMock.EXPECT().BuildHelmChart(destination, input.Params.Path).Return(nil).Times(1)
