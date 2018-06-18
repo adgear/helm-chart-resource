@@ -3,8 +3,8 @@ FROM golang:1.10.3-alpine3.7 AS build
 ADD . /go/src/github.com/adgear/helm-chart-resource/
 RUN apk add --no-cache git ;\
   go get -u github.com/golang/dep/cmd/dep ;\
-  dep ensure ;\
   cd /go/src/github.com/adgear/helm-chart-resource ;\
+  dep ensure ;\
   go build -ldflags "-X main.version=`cat VERSION`" .
 
 FROM alpine:3.7 AS runtime
