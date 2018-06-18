@@ -49,7 +49,7 @@ func (or outResource) Execute(input utils.Input, sourcePath string, tmpdir strin
 
 	var output string
 
-	output = "{version: {ref: \"" + version + "\"}}"
+	output = "{\"version\": {\"ref\": \"" + version + "\"}}"
 
 	return output, nil
 }
