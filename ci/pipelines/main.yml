@@ -24,7 +24,6 @@ resources:
       branch: master
       ignore_paths:
       - "*.md"
-      - "VERSION"
       private_key: ((adgear-concourse.ssh_private_key))
 
   - name: helm-chart-resource-pr
