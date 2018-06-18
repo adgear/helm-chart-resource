@@ -3,6 +3,13 @@
 version: '2'
 
 tasks:
+  build-rc:
+    cmds:
+      - docker build -t adgear/helm-chart-resource:{{.VERSION}} .
+      - docker push adgear/helm-chart-resource:{{.VERSION}}
+      - echo "adgear/helm-chart-resource:{{.VERSION}}" >> .cleanup
+    vars:
+      VERSION: {sh: date +%s}
   ensure:
     cmds:
       - dep ensure

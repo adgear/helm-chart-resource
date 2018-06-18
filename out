@@ -20,6 +20,6 @@ payload=$(mktemp $TMPDIR/helm-release-check.XXXXXX)
 
 cat > $payload <&0
 
-output=$(cat $payload | ./helm-chart-resource --action out --source $source --tmpdir $TMPDIR)
+output=$(cat $payload | helm-chart-resource --action out --source $source --tmpdir $TMPDIR)
 
 jq -n "$output" >&3

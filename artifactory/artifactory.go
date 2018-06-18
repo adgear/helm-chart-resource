@@ -10,7 +10,7 @@ import (
 
 // Artifactory interface
 type Artifactory interface {
-	UploadArtifactoryChart(source utils.Source, params utils.Params, version map[string]string, tmpdir string) error
+	UploadArtifactoryChart(source utils.Source, params utils.Params, version string, tmpdir string) error
 }
 
 type artifactory struct{}
@@ -21,7 +21,7 @@ func NewArtifactory() Artifactory {
 }
 
 // UploadArtifactoryChart takes the .tgz and POST to artifactory
-func (a artifactory) UploadArtifactoryChart(source utils.Source, params utils.Params, version map[string]string, tmpdir string) error {
+func (a artifactory) UploadArtifactoryChart(source utils.Source, params utils.Params, version string, tmpdir string) error {
 	for _, repo := range source.Repos {
 		if repo.Name == source.RepositoryName {
 			resp, err := resty.R().
@@ -46,9 +46,9 @@ func (a artifactory) UploadArtifactoryChart(source utils.Source, params utils.Pa
 			}
 
 			resp, err = resty.R().
-				SetFile(source.ChartName+"-"+version["ref"]+".tgz", tmpdir+"/"+source.ChartName+"-"+version["ref"]+".tgz").
+				SetFile(source.ChartName+"-"+version+".tgz", tmpdir+"/"+source.ChartName+"-"+version+".tgz").
 				SetAuthToken(respMap["access_token"].(string)).
-				Put(repo.URL + "/" + source.ChartName + "-" + version["ref"] + ".tgz")
+				Put(repo.URL + "/" + source.ChartName + "-" + version + ".tgz")
 
 			if err != nil {
 				return err

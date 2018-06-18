@@ -94,3 +94,16 @@ func (m *MockHelm) PackageHelmChart(source, path, tmpdir string) error {
 func (mr *MockHelmMockRecorder) PackageHelmChart(source, path, tmpdir interface{}) *gomock.Call {
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "PackageHelmChart", reflect.TypeOf((*MockHelm)(nil).PackageHelmChart), source, path, tmpdir)
 }
+
+// ExtractChartVersion mocks base method
+func (m *MockHelm) ExtractChartVersion(source, path string) (string, error) {
+	ret := m.ctrl.Call(m, "ExtractChartVersion", source, path)
+	ret0, _ := ret[0].(string)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// ExtractChartVersion indicates an expected call of ExtractChartVersion
+func (mr *MockHelmMockRecorder) ExtractChartVersion(source, path interface{}) *gomock.Call {
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ExtractChartVersion", reflect.TypeOf((*MockHelm)(nil).ExtractChartVersion), source, path)
+}

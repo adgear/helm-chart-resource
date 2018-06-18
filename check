@@ -13,6 +13,6 @@ export TMPDIR=${TMPDIR:-/tmp}
 payload=$TMPDIR/helm-chart-resource
 cat > $payload <&0
 
-output=$(cat $payload | ./helm-chart-resource --action check)
+output=$(cat $payload | helm-chart-resource --action check)
 
 jq -n "$output" >&3

@@ -1,11 +1,13 @@
 package helm
 
 import (
+	"io/ioutil"
 	"log"
 	"os"
 	"os/exec"
 
 	"github.com/adgear/helm-chart-resource/utils"
+	"gopkg.in/yaml.v2"
 )
 
 // Helm interface
@@ -15,6 +17,7 @@ type Helm interface {
 	InstallHelmRepo(repos []utils.Repo) error
 	BuildHelmChart(source string, path string) error
 	PackageHelmChart(source string, path string, tmpdir string) error
+	ExtractChartVersion(source string, path string) (string, error)
 }
 
 type helm struct{}
@@ -120,4 +123,21 @@ func (h helm) PackageHelmChart(source string, path string, tmpdir string) error 
 	}
 
 	return nil
+}
+
+func (h helm) ExtractChartVersion(source string, path string) (string, error) {
+	var chartYaml map[string]string
+	chartYamlByte, err := ioutil.ReadFile(source + "/" + path + "/Chart.yaml")
+
+	if err != nil {
+		return "null", err
+	}
+
+	err = yaml.Unmarshal(chartYamlByte, &chartYaml)
+
+	if err != nil {
+		return "null", err
+	}
+
+	return chartYaml["version"], nil
 }

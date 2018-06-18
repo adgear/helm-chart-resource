@@ -30,14 +30,16 @@ func NewOutResource(helm helm.Helm, artifactory artifactory.Artifactory) (OutRes
 
 // Execute the out resource
 func (or outResource) Execute(input utils.Input, sourcePath string, tmpdir string) (string, error) {
+	version, err := or.helm.ExtractChartVersion(sourcePath, input.Params.Path)
+	if err != nil {
+		return "", err
+	}
 	or.helm.InstallHelmRepo(input.Source.Repos)
-
 	or.helm.BuildHelmChart(sourcePath, input.Params.Path)
-
 	or.helm.PackageHelmChart(sourcePath, input.Params.Path, tmpdir)
 
 	if input.Params.Type == "artifactory" {
-		err := or.artifactory.UploadArtifactoryChart(input.Source, input.Params, input.Version, tmpdir)
+		err := or.artifactory.UploadArtifactoryChart(input.Source, input.Params, version, tmpdir)
 		if err != nil {
 			return "", err
 		}
@@ -47,7 +49,7 @@ func (or outResource) Execute(input utils.Input, sourcePath string, tmpdir strin
 
 	var output string
 
-	output = "{version: {ref: \"" + input.Version["ref"] + "\"}}"
+	output = "{version: {ref: \"" + version + "\"}}"
 
 	return output, nil
 }

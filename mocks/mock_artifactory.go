@@ -34,7 +34,7 @@ func (m *MockArtifactory) EXPECT() *MockArtifactoryMockRecorder {
 }
 
 // UploadArtifactoryChart mocks base method
-func (m *MockArtifactory) UploadArtifactoryChart(source utils.Source, params utils.Params, version map[string]string, tmpdir string) error {
+func (m *MockArtifactory) UploadArtifactoryChart(source utils.Source, params utils.Params, version, tmpdir string) error {
 	ret := m.ctrl.Call(m, "UploadArtifactoryChart", source, params, version, tmpdir)
 	ret0, _ := ret[0].(error)
 	return ret0
