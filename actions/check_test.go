@@ -47,30 +47,6 @@ func TestNoChartName(t *testing.T) {
 	assert.PanicsWithValue(t, "os.Exit called", func() { cr.Execute(input.Source) }, "os.Exit was not called")
 }
 
-// func TestWrongInput(t *testing.T) {
-// 	// So far it's always valid...
-// 	setup(t)
-
-// 	input := utils.Input{
-// 		Source: utils.Source{
-// 			ChartName:      "etcd",
-// 			RepositoryName: "incubator",
-// 		},
-// 	}
-// 	searchResults := 6
-
-// 	repo := "incubator/etcd"
-
-// 	helmMock.EXPECT().InstallHelmRepo(nil).Return(nil).Times(1)
-// 	helmMock.EXPECT().Search(repo).Return(searchResults, nil).Times(1)
-
-// 	cr, _ := actions.NewCheckResource(helmMock)
-
-// 	_, err := cr.Execute(input.Source)
-
-// 	assert.Error(t, err)
-// }
-
 func TestPublicRepoFound(t *testing.T) {
 	setup(t)
 
