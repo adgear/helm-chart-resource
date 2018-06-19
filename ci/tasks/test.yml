@@ -16,15 +16,16 @@ run:
       #!/bin/bash
       set -e
       
-      apk add --no-cache git
-      go get -u github.com/golang/dep/cmd/dep    
+      apk add --no-cache --no-progress git
+      go get -u github.com/golang/dep/cmd/dep
+      go get -u -v github.com/go-task/task/cmd/task
+
       mkdir -p /go/src/github.com/adgear/helm-chart-resource/
       cp -pr helm-chart-resource-pr/* /go/src/github.com/adgear/helm-chart-resource/.
       test_path="$(pwd)/coverage"
       cd /go/src/github.com/adgear/helm-chart-resource/
-      dep ensure
       echo "\`\`\`console" > $test_path/tests.results
-      go test ./... -cover -v >> $test_path/tests.results
+      task test >> $test_path/tests.results
       echo -n "\`\`\`" >> $test_path/tests.results
 
       cat $test_path/tests.results

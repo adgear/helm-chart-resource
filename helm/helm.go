@@ -57,8 +57,6 @@ func (h helm) InstallHelmRepo(repos []utils.Repo) error {
 	cmdName := "helm"
 	var (
 		cmdArgs []string
-		// cmdOut  []byte
-		err error
 	)
 
 	for _, repo := range repos {
@@ -70,17 +68,20 @@ func (h helm) InstallHelmRepo(repos []utils.Repo) error {
 		}
 
 		if repo.Username != "" {
-			cmdArgs = append(cmdArgs, "--username "+repo.Username)
+			cmdArgs = append(cmdArgs, "--username")
+			cmdArgs = append(cmdArgs, repo.Username)
 		}
 
 		if repo.Password != "" {
-			cmdArgs = append(cmdArgs, "--password "+repo.Password)
+			cmdArgs = append(cmdArgs, "--password")
+			cmdArgs = append(cmdArgs, repo.Password)
 		}
 
-		if _, err = exec.Command(cmdName, cmdArgs...).Output(); err != nil {
+		if _, err := exec.Command(cmdName, cmdArgs...).CombinedOutput(); err != nil {
 			return err
 		}
 	}
+
 	return nil
 }
 
