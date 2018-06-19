@@ -15,7 +15,7 @@ tasks:
       - dep ensure
   test:
     cmds:
-      - go test ./... -cover -v
+      - go test $(go list ./... | grep -v mocks) -cover
   build:
     deps: [ensure]
     cmds:
