@@ -1,6 +1,7 @@
 package actions_test
 
 import (
+	"errors"
 	"os"
 	"testing"
 
@@ -46,30 +47,29 @@ func TestNoChartName(t *testing.T) {
 	assert.PanicsWithValue(t, "os.Exit called", func() { cr.Execute(input.Source) }, "os.Exit was not called")
 }
 
-func TestWrongInput(t *testing.T) {
-	// So far it's always valid...
-	// setup(t)
+// func TestWrongInput(t *testing.T) {
+// 	// So far it's always valid...
+// 	setup(t)
 
-	// input := utils.Input{
-	// 	Source: utils.Source{
-	// 		ChartName:      "etcd",
-	// 		RepositoryName: "incubator",
-	// 	},
-	// }
-	// searchResults := `NAME          	CHART VERSION	APP VERSION	DESCRIPTION
-	// incubator/etcd	0.4\".0        	2.2.5      	Distributed reliable key-value store for the mo...
-	// `
+// 	input := utils.Input{
+// 		Source: utils.Source{
+// 			ChartName:      "etcd",
+// 			RepositoryName: "incubator",
+// 		},
+// 	}
+// 	searchResults := 6
 
-	// repo := "incubator/etcd"
+// 	repo := "incubator/etcd"
 
-	// helmMock.EXPECT().Search(repo).Return(searchResults, nil).Times(1)
+// 	helmMock.EXPECT().InstallHelmRepo(nil).Return(nil).Times(1)
+// 	helmMock.EXPECT().Search(repo).Return(searchResults, nil).Times(1)
 
-	// cr, _ := actions.NewCheckResource(helmMock)
+// 	cr, _ := actions.NewCheckResource(helmMock)
 
-	// _, err := cr.Execute(input.Source)
+// 	_, err := cr.Execute(input.Source)
 
-	// assert.Error(t, err)
-}
+// 	assert.Error(t, err)
+// }
 
 func TestPublicRepoFound(t *testing.T) {
 	setup(t)
@@ -100,6 +100,7 @@ func TestPublicRepoFound(t *testing.T) {
 	repo := "incubator/etcd"
 	output := "[{\"ref\":\"0.4.0\"}]"
 
+	helmMock.EXPECT().InstallHelmRepo(nil).Return(nil).Times(1)
 	helmMock.EXPECT().Search(repo).Return(searchResults, nil).Times(1)
 
 	cr, _ := actions.NewCheckResource(helmMock)
@@ -124,6 +125,7 @@ func TestPublicRepoNotFound(t *testing.T) {
 	`
 	repo := "incubator/etcd"
 
+	helmMock.EXPECT().InstallHelmRepo(nil).Return(nil).Times(1)
 	helmMock.EXPECT().Search(repo).Return(searchResults, nil).Times(1)
 
 	cr, _ := actions.NewCheckResource(helmMock)
@@ -164,6 +166,7 @@ func TestPrivateRepoFound(t *testing.T) {
 	repo := "adgear-helm/netbox"
 	output := "[{\"ref\":\"0.1.3\"}]"
 
+	helmMock.EXPECT().InstallHelmRepo(repos).Return(nil).Times(1)
 	helmMock.EXPECT().Search(repo).Return(searchResults, nil).Times(1)
 
 	cr, _ := actions.NewCheckResource(helmMock)
@@ -173,4 +176,43 @@ func TestPrivateRepoFound(t *testing.T) {
 	assert.Equal(t, output, o)
 
 	assert.NoError(t, err)
+}
+
+func TestBadRepo(t *testing.T) {
+	setup(t)
+
+	var repos []utils.Repo
+
+	repos = append(repos, utils.Repo{
+		Name:     "adgear-helm",
+		URL:      "https://someurl.com",
+		Username: "potatoes",
+		Password: "tomatoes",
+	})
+
+	input := utils.Input{
+		Source: utils.Source{
+			ChartName:      "netbox",
+			RepositoryName: "adgear-helm",
+			Repos:          repos,
+		},
+	}
+	searchResults := `NAME              	CHART VERSION	APP VERSION	DESCRIPTION                         
+	adgear-helm/netbox	0.1.3        	1.0        	A Helm chart for digitalocean netbox
+	adgear-helm/netbox	0.1.2        	1.0        	A Helm chart for digitalocean netbox
+	adgear-helm/netbox	0.1.1        	1.0        	A Helm chart for digitalocean netbox
+	adgear-helm/netbox	0.1.0        	1.0        	A Helm chart for digitalocean netbox
+	`
+
+	repo := "adgear-helm/netbox"
+	// output := "[{\"ref\":\"0.1.3\"}]"
+
+	helmMock.EXPECT().InstallHelmRepo(repos).Return(errors.New("DIEEE")).Times(1)
+	helmMock.EXPECT().Search(repo).Return(searchResults, nil).Times(1)
+
+	cr, _ := actions.NewCheckResource(helmMock)
+
+	_, err := cr.Execute(input.Source)
+
+	assert.Error(t, err)
 }

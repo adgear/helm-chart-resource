@@ -36,9 +36,13 @@ func (cr checkResource) Execute(source utils.Source) (string, error) {
 	}
 
 	var refs []map[string]string
+	err := cr.helm.InstallHelmRepo(source.Repos)
+
+	if err != nil {
+		return "", err
+	}
 
 	cmdOutput, err := cr.helm.Search(source.RepositoryName + "/" + source.ChartName)
-
 	if cmdOutput == `No results found
 	` {
 		return "", errors.New(cmdOutput)
@@ -51,11 +55,7 @@ func (cr checkResource) Execute(source utils.Source) (string, error) {
 		refs = append(refs, map[string]string{"ref": info["chart_version"].(string)})
 	}
 
-	output, err := json.Marshal(refs)
-
-	if err != nil {
-		return "", err
-	}
+	output, _ := json.Marshal(refs)
 
 	return string(output), nil
 }
