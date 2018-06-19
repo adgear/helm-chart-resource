@@ -3,6 +3,7 @@ package artifactory
 import (
 	"encoding/json"
 	"errors"
+	"io/ioutil"
 
 	"github.com/adgear/helm-chart-resource/utils"
 	resty "gopkg.in/resty.v1"
@@ -45,8 +46,15 @@ func (a artifactory) UploadArtifactoryChart(source utils.Source, params utils.Pa
 				return err
 			}
 
+			fileBytes, err := ioutil.ReadFile(tmpdir + "/" + source.ChartName + "-" + version + ".tgz")
+
+			if err != nil {
+				return err
+			}
+
 			resp, err = resty.R().
-				SetFile(source.ChartName+"-"+version+".tgz", tmpdir+"/"+source.ChartName+"-"+version+".tgz").
+				SetBody(fileBytes).
+				SetContentLength(true).
 				SetAuthToken(respMap["access_token"].(string)).
 				Put(repo.URL + "/" + source.ChartName + "-" + version + ".tgz")
 
