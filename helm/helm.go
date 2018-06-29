@@ -13,6 +13,7 @@ import (
 // Helm interface
 type Helm interface {
 	DepUpdate(path string) (string, error)
+	RepoUpdate()
 	Search(repo string) (string, error)
 	InstallHelmRepo(repos []utils.Repo) error
 	BuildHelmChart(source string, path string) error
@@ -29,6 +30,23 @@ func NewHelm() Helm {
 
 func (h helm) DepUpdate(path string) (string, error) {
 	return "", nil
+}
+
+func (h helm) RepoUpdate() {
+	var (
+		err error
+	)
+
+	cmdName := "helm"
+	cmdArgs := []string{
+		"repo",
+		"update",
+	}
+
+	if _, err = exec.Command(cmdName, cmdArgs...).Output(); err != nil {
+		log.Fatal(err.Error())
+		os.Exit(1)
+	}
 }
 
 func (h helm) Search(repo string) (string, error) {

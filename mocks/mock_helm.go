@@ -46,6 +46,16 @@ func (mr *MockHelmMockRecorder) DepUpdate(path interface{}) *gomock.Call {
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DepUpdate", reflect.TypeOf((*MockHelm)(nil).DepUpdate), path)
 }
 
+// RepoUpdate mocks base method
+func (m *MockHelm) RepoUpdate() {
+	m.ctrl.Call(m, "RepoUpdate")
+}
+
+// RepoUpdate indicates an expected call of RepoUpdate
+func (mr *MockHelmMockRecorder) RepoUpdate() *gomock.Call {
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "RepoUpdate", reflect.TypeOf((*MockHelm)(nil).RepoUpdate))
+}
+
 // Search mocks base method
 func (m *MockHelm) Search(repo string) (string, error) {
 	ret := m.ctrl.Call(m, "Search", repo)
