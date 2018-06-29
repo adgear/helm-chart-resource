@@ -35,6 +35,7 @@ resources:
       private_key: ((adgear-concourse.ssh_private_key))
       repo: adgear/helm-chart-resource
       base: master
+      label: ready-to-test
 
 jobs:
   - name: test-pr
