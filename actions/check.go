@@ -42,6 +42,8 @@ func (cr checkResource) Execute(source utils.Source) (string, error) {
 		return "", err
 	}
 
+	cr.helm.RepoUpdate()
+
 	cmdOutput, err := cr.helm.Search(source.RepositoryName + "/" + source.ChartName)
 	if cmdOutput == `No results found
 	` {

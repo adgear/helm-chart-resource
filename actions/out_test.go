@@ -32,6 +32,7 @@ func TestArtifactory(t *testing.T) {
 	output := "{\"version\": {\"ref\": \"0.4.0\"}}"
 
 	helmMock.EXPECT().InstallHelmRepo([]utils.Repo{}).Return(nil).Times(1)
+	helmMock.EXPECT().RepoUpdate().Times(1)
 	helmMock.EXPECT().BuildHelmChart(destination, input.Params.Path).Return(nil).Times(1)
 	helmMock.EXPECT().ExtractChartVersion(destination, input.Params.Path).Return(version, nil).Times(1)
 	helmMock.EXPECT().PackageHelmChart(destination, input.Params.Path, "/tmp").Return(nil).Times(1)
@@ -67,6 +68,7 @@ func TestNotArtifactory(t *testing.T) {
 	version := "0.4.0"
 
 	helmMock.EXPECT().InstallHelmRepo([]utils.Repo{}).Return(nil).Times(1)
+	helmMock.EXPECT().RepoUpdate().Times(1)
 	helmMock.EXPECT().BuildHelmChart(destination, input.Params.Path).Return(nil).Times(1)
 	helmMock.EXPECT().ExtractChartVersion(destination, input.Params.Path).Return(version, nil).Times(1)
 	helmMock.EXPECT().PackageHelmChart(destination, input.Params.Path, "/tmp").Return(nil).Times(1)
@@ -130,6 +132,7 @@ func TestFailedUpload(t *testing.T) {
 	destination := "/potatoes/"
 
 	helmMock.EXPECT().InstallHelmRepo([]utils.Repo{}).Return(nil).Times(1)
+	helmMock.EXPECT().RepoUpdate().Times(1)
 	helmMock.EXPECT().BuildHelmChart(destination, input.Params.Path).Return(nil).Times(1)
 	helmMock.EXPECT().ExtractChartVersion(destination, input.Params.Path).Return(version, nil).Times(1)
 	helmMock.EXPECT().PackageHelmChart(destination, input.Params.Path, "/tmp").Return(nil).Times(1)

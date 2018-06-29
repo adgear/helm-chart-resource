@@ -42,6 +42,8 @@ func TestNoChartName(t *testing.T) {
 		Source: utils.Source{},
 	}
 
+	helmMock.EXPECT().RepoUpdate().Times(1)
+
 	cr, _ := actions.NewCheckResource(helmMock)
 
 	assert.PanicsWithValue(t, "os.Exit called", func() { cr.Execute(input.Source) }, "os.Exit was not called")
@@ -77,6 +79,7 @@ func TestPublicRepoFound(t *testing.T) {
 	output := "[{\"ref\":\"0.4.0\"}]"
 
 	helmMock.EXPECT().InstallHelmRepo(nil).Return(nil).Times(1)
+	helmMock.EXPECT().RepoUpdate().Times(1)
 	helmMock.EXPECT().Search(repo).Return(searchResults, nil).Times(1)
 
 	cr, _ := actions.NewCheckResource(helmMock)
@@ -102,6 +105,7 @@ func TestPublicRepoNotFound(t *testing.T) {
 	repo := "incubator/etcd"
 
 	helmMock.EXPECT().InstallHelmRepo(nil).Return(nil).Times(1)
+	helmMock.EXPECT().RepoUpdate().Times(1)
 	helmMock.EXPECT().Search(repo).Return(searchResults, nil).Times(1)
 
 	cr, _ := actions.NewCheckResource(helmMock)
@@ -143,6 +147,7 @@ func TestPrivateRepoFound(t *testing.T) {
 	output := "[{\"ref\":\"0.1.3\"}]"
 
 	helmMock.EXPECT().InstallHelmRepo(repos).Return(nil).Times(1)
+	helmMock.EXPECT().RepoUpdate().Times(1)
 	helmMock.EXPECT().Search(repo).Return(searchResults, nil).Times(1)
 
 	cr, _ := actions.NewCheckResource(helmMock)
@@ -184,6 +189,7 @@ func TestBadRepo(t *testing.T) {
 	// output := "[{\"ref\":\"0.1.3\"}]"
 
 	helmMock.EXPECT().InstallHelmRepo(repos).Return(errors.New("DIEEE")).Times(1)
+	helmMock.EXPECT().RepoUpdate().Times(1)
 	helmMock.EXPECT().Search(repo).Return(searchResults, nil).Times(1)
 
 	cr, _ := actions.NewCheckResource(helmMock)

@@ -28,6 +28,7 @@ func TestCannotWriteFile(t *testing.T) {
 	cr, _ := actions.NewInResource(helmMock)
 
 	helmMock.EXPECT().InstallHelmRepo([]utils.Repo{}).Return(nil).Times(1)
+	helmMock.EXPECT().RepoUpdate().Times(1)
 	helmMock.EXPECT().BuildHelmChart(destination, input.Params.Path).Return(nil).Times(1)
 	helmMock.EXPECT().PackageHelmChart(destination, input.Params.Path, "/tmp").Return(nil).Times(1)
 
@@ -56,6 +57,7 @@ func TestWriteToFile(t *testing.T) {
 	cr, _ := actions.NewInResource(helmMock)
 
 	helmMock.EXPECT().InstallHelmRepo([]utils.Repo{}).Return(nil).Times(1)
+	helmMock.EXPECT().RepoUpdate().Times(1)
 	helmMock.EXPECT().BuildHelmChart(destination, input.Params.Path).Return(nil).Times(1)
 	helmMock.EXPECT().PackageHelmChart(destination, input.Params.Path, "/tmp").Return(nil).Times(1)
 
