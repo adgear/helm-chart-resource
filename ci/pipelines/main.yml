@@ -36,6 +36,7 @@ resources:
       repo: adgear/helm-chart-resource
       base: master
       label: ready-to-test
+      ci_skip: true
 
 jobs:
   - name: test-pr
