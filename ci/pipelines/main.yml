@@ -16,7 +16,7 @@ resources:
       repository: adgear/helm-chart-resource
       username: ((dockerhub.username))
       password: ((dockerhub.password))
-      
+
   - name: helm-chart-resource-repo
     type: git
     source:
