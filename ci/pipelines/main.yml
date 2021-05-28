@@ -11,6 +11,7 @@ resource_types:
 
 resources:
   - name: helm-chart-resource
+    check_every: 1h
     type: docker-image
     source:
       repository: adgear/helm-chart-resource
@@ -18,6 +19,7 @@ resources:
       password: ((dockerhub.password))
 
   - name: helm-chart-resource-repo
+    check_every: 1h
     type: git
     source:
       uri: git@github.com:adgear/helm-chart-resource.git
@@ -27,6 +29,7 @@ resources:
       private_key: ((adgear-concourse.ssh_private_key))
 
   - name: helm-chart-resource-pr
+    check_every: 1h
     type: pull-request
     source:
       only_mergeable: true
@@ -41,32 +44,32 @@ resources:
 jobs:
   - name: test-pr
     plan:
-    - get: helm-chart-resource-pr
-      trigger: true
-    - put: helm-chart-resource-pr
-      params:
-        path: helm-chart-resource-pr
-        status: pending
-    - task: test
-      file: helm-chart-resource-pr/ci/tasks/test.yml
-      on_failure:
-        put: helm-chart-resource-pr
+      - get: helm-chart-resource-pr
+        trigger: true
+      - put: helm-chart-resource-pr
         params:
           path: helm-chart-resource-pr
-          status: failure
-      on_success:
-        put: helm-chart-resource-pr
-        params:
-          path: helm-chart-resource-pr
-          status: success
-          comment: coverage/tests.results
+          status: pending
+      - task: test
+        file: helm-chart-resource-pr/ci/tasks/test.yml
+        on_failure:
+          put: helm-chart-resource-pr
+          params:
+            path: helm-chart-resource-pr
+            status: failure
+        on_success:
+          put: helm-chart-resource-pr
+          params:
+            path: helm-chart-resource-pr
+            status: success
+            comment: coverage/tests.results
 
   - name: build-master
     plan:
-    - get: helm-chart-resource-repo
-      trigger: true
-    - put: helm-chart-resource
-      params:
-        build: helm-chart-resource-repo
-        tag: helm-chart-resource-repo/VERSION
-        tag_as_latest: true
+      - get: helm-chart-resource-repo
+        trigger: true
+      - put: helm-chart-resource
+        params:
+          build: helm-chart-resource-repo
+          tag: helm-chart-resource-repo/VERSION
+          tag_as_latest: true
